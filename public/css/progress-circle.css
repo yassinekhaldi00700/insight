@@ -1,0 +1,94 @@
+/* Completion ring on the N+1 / N+2 team dashboards */
+
+/* 180px matches the SVG geometry (cx=90, cy=90, r=80) */
+.block {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 180px;
+	height: 180px;
+	margin-left: auto;
+	border-radius: 50%;
+}
+
+.block .box {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	width: calc(100% - 50px);
+	height: calc(100% - 50px);
+	border-radius: 50%;
+	background-color: #28a745;
+	box-shadow: 0 10px 24px -8px rgba(25, 120, 39, .7), inset 0 -6px 16px rgba(0, 0, 0, .08);
+}
+
+.block .box::before {
+	position: absolute;
+	content: '';
+	width: calc(100% + 28px);
+	height: calc(100% + 28px);
+	border-radius: 50%;
+	border: 2px solid rgba(40, 167, 69, .25);
+}
+
+.block .box .number { margin: 0; line-height: 1; }
+.block .box .number span { color: #ffffff; }
+.block .box .number .num { font-size: 2rem; font-weight: 700; letter-spacing: -.02em; }
+.block .box .number .sub { font-size: 1rem; font-weight: 500; margin-left: 2px; }
+
+.block .box .title {
+	font-size: 19px;
+	font-weight: 600;
+	color: #ffffff;
+}
+
+.dots {
+	display: block;
+	position: absolute;
+	z-index: 2;
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+	transition: 2s transform var(--ease, ease), 2s opacity ease;
+}
+
+.dots::after {
+	position: absolute;
+	content: '';
+	width: 10px;
+	height: 10px;
+	top: 5px;
+	left: 50%;
+	border-radius: 50%;
+	background-color: #28a745;
+	box-shadow: 0 0 0 3px #fff, 0 0 6px 2px rgba(25, 120, 39, .6);
+	transform: translateX(-50%);
+}
+
+.block .svg {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	fill: none;
+	transform: rotate(-90deg);
+}
+
+.block .circle {
+	/* the gradient is never defined in the markup — fall back to brand green */
+	stroke: url(#gradientStyle) #28a745;
+	stroke-width: 4px;
+	stroke-linecap: round;
+	stroke-dasharray: 503;
+	stroke-dashoffset: 503;
+	animation-duration: 2s;
+	animation-timing-function: linear;
+	animation-fill-mode: forwards;
+	transition: 2s stroke-dashoffset;
+}
+
+@media (max-width: 767.98px) {
+	.block { zoom: .75; }
+}
