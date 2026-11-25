@@ -201,8 +201,13 @@
                                       title="View Employee Details">
                                 <i class="fas fa-eye"></i>
                               </button>
-                              <button class="btn btn-outline-danger" 
-                                      onclick="deleteEmployee({{ $employee->id }}, '{{ $employee->name }}')" 
+                              <button class="btn btn-outline-warning js-change-password"
+                                      data-id="{{ $employee->id }}" data-name="{{ $employee->name }}"
+                                      title="Changer le mot de passe">
+                                <i class="fas fa-key"></i>
+                              </button>
+                              <button class="btn btn-outline-danger"
+                                      onclick="deleteEmployee({{ $employee->id }}, '{{ $employee->name }}')"
                                       title="Delete Employee">
                                 <i class="fas fa-trash"></i>
                               </button>
@@ -357,8 +362,13 @@
                         title="View Employee Details">
                   <i class="fas fa-eye"></i>
                 </button>
-                <button class="btn btn-outline-danger" 
-                        onclick="deleteEmployee(${employee.id}, '${employee.name}')" 
+                <button class="btn btn-outline-warning js-change-password"
+                        data-id="${employee.id}" data-name="${String(employee.name).replace(/"/g, '&quot;')}"
+                        title="Changer le mot de passe">
+                  <i class="fas fa-key"></i>
+                </button>
+                <button class="btn btn-outline-danger"
+                        onclick="deleteEmployee(${employee.id}, '${employee.name}')"
                         title="Delete Employee">
                   <i class="fas fa-trash"></i>
                 </button>
@@ -573,6 +583,76 @@
     // Make functions globally available
     window.deleteEmployee = deleteEmployee;
     window.confirmDelete = confirmDelete;
+  </script>
+
+  <!-- Change password modal -->
+  <div class="modal fade" id="passwordModal" tabindex="-1" aria-labelledby="passwordModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <form method="POST" id="passwordForm" class="modal-content">
+        @csrf
+        <div class="modal-header">
+          <h5 class="modal-title" id="passwordModalLabel">
+            <i class="fas fa-key me-2"></i>Changer le mot de passe
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+        </div>
+        <div class="modal-body">
+          <p class="mb-3">Nouveau mot de passe pour <strong id="passwordUserName"></strong></p>
+          <div class="mb-3">
+            <label for="new_password" class="form-label">Nouveau mot de passe</label>
+            <input type="password" class="form-control" id="new_password" name="password" minlength="8" required autocomplete="new-password">
+            <div class="form-text">8 caractères minimum.</div>
+          </div>
+          <div class="mb-2">
+            <label for="new_password_confirmation" class="form-label">Confirmer le mot de passe</label>
+            <input type="password" class="form-control" id="new_password_confirmation" name="password_confirmation" minlength="8" required autocomplete="new-password">
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="showPasswords">
+            <label class="form-check-label" for="showPasswords">Afficher</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="submit" class="btn btn-warning"><i class="fas fa-save me-2"></i>Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const modalEl = document.getElementById('passwordModal');
+      const form = document.getElementById('passwordForm');
+      const pwd = document.getElementById('new_password');
+      const pwd2 = document.getElementById('new_password_confirmation');
+
+      // Works for both server-rendered and JS-rendered rows
+      document.addEventListener('click', function (e) {
+        const btn = e.target.closest('.js-change-password');
+        if (!btn) return;
+        form.action = '{{ url('/admin/employees') }}/' + btn.dataset.id + '/password';
+        document.getElementById('passwordUserName').textContent = btn.dataset.name;
+        form.reset();
+        pwd.type = pwd2.type = 'password';
+        bootstrap.Modal.getOrCreateInstance(modalEl).show();
+      });
+
+      modalEl.addEventListener('shown.bs.modal', () => pwd.focus());
+
+      document.getElementById('showPasswords').addEventListener('change', function () {
+        pwd.type = pwd2.type = this.checked ? 'text' : 'password';
+      });
+
+      form.addEventListener('submit', function (e) {
+        if (pwd.value !== pwd2.value) {
+          e.preventDefault();
+          pwd2.setCustomValidity('Les mots de passe ne correspondent pas.');
+          pwd2.reportValidity();
+        }
+      });
+      pwd2.addEventListener('input', () => pwd2.setCustomValidity(''));
+    })();
   </script>
 
 </body>

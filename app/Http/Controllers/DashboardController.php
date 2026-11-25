@@ -1036,6 +1036,36 @@ class DashboardController extends Controller
     }
 
     /**
+     * Admin sets a new password for any user
+     */
+    public function changeEmployeePassword(Request $request, $id)
+    {
+        $user = DB::table('users')->where('id', $id)->first();
+        if (!$user) {
+            return redirect()->route('admin.employees')->withErrors(['error' => 'Utilisateur introuvable.']);
+        }
+
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+            'password' => 'required|string|min:8|confirmed',
+        ], [
+            'password.min' => 'Le mot de passe doit contenir au moins 8 caractères.',
+            'password.confirmed' => 'Les mots de passe ne correspondent pas.',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->route('admin.employees')->withErrors($validator);
+        }
+
+        DB::table('users')->where('id', $id)->update([
+            'password' => \Illuminate\Support\Facades\Hash::make($request->input('password')),
+            'updated_at' => now(),
+        ]);
+
+        return redirect()->route('admin.employees')
+            ->with('success', 'Mot de passe de ' . $user->name . ' modifié avec succès.');
+    }
+
+    /**
      * Delete an employee
      */
     public function deleteEmployee($id)

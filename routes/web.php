@@ -28,6 +28,7 @@ Route::middleware(['check.session', 'admin'])->group(function () {
     Route::get('/admin/employees', [DashboardController::class, 'showEmployees'])->name('admin.employees');
     Route::get('/admin/employees/export', [DashboardController::class, 'exportEmployees'])->name('admin.employees.export');
     Route::delete('/admin/employees/{id}/delete', [DashboardController::class, 'deleteEmployee'])->name('admin.employees.delete');
+    Route::post('/admin/employees/{id}/password', [DashboardController::class, 'changeEmployeePassword'])->name('admin.employees.password');
     Route::get('/admin/objectives', [DashboardController::class, 'showObjectives'])->name('admin.objectives');
     Route::get('/admin/evaluations', [DashboardController::class, 'showEvaluations'])->name('admin.evaluations');
     Route::get('/admin/profile', [DashboardController::class, 'showProfile'])->name('admin.profile');
