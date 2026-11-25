@@ -34,8 +34,8 @@ public function submitForm(Request $request)
     $totalQuestions = $request->input('total_questions');
     $responses = $request->input('responses');
     $categories = $request->input('categories');
-    $responses = Team::filterResponses($userId, $responses);
     $userId = session('user_id');
+    $responses = Team::filterResponses($userId, $responses);
 
     if (!$userId) {
         return redirect()->route('login')->withErrors(['error' => 'Veuillez vous connecter pour soumettre les réponses.']);
